@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project-specific
+checkpoints/
+logs/
+wandb/
+
+# Large data files (add specific data paths if needed)
+*.h5
+*.hdf5
+*.nii
+*.nii.gz
+*.dcm
+
+# Jupyter
+.ipynb_checkpoints/
+
+# GSD planning
+.planning/
+.agents/
