@@ -17,14 +17,13 @@
 
 ## 📋 Overview
 
-This project implements an end-to-end deep learning pipeline for **4-class Alzheimer's Disease (AD) staging** from FDG-PET neuroimaging scans. It combines a **ResNet50 backbone** with **CBAM (Convolutional Block Attention Module)** attention and provides clinical interpretability through **Grad-CAM** and **SHAP** explainability methods.
+This project implements an end-to-end deep learning pipeline for **3-class Alzheimer's Disease (AD) staging** from FDG-PET neuroimaging scans. It combines a **ResNet50 backbone** with **CBAM (Convolutional Block Attention Module)** attention and provides clinical interpretability through **Grad-CAM** and **SHAP** explainability methods.
 
 ### Classification Stages
 
 | Label | Stage | Description |
 |:-----:|:------|:------------|
 | **CN** | Cognitively Normal | Healthy control subjects |
-| **EMCI** | Early Mild Cognitive Impairment | Earliest detectable cognitive decline |
 | **MCI** | Mild Cognitive Impairment | Intermediate stage, higher conversion risk |
 | **AD** | Alzheimer's Disease | Clinical dementia diagnosis |
 
@@ -41,31 +40,13 @@ This project implements an end-to-end deep learning pipeline for **4-class Alzhe
 
 The model uses an ImageNet-pretrained **ResNet50** backbone enhanced with a **CBAM** attention module inserted after Layer 3. CBAM applies sequential **channel** and **spatial** attention to help the model focus on metabolically relevant brain regions.
 
-```
-Input (3 × 224 × 224)
-    │
-    ├─ Conv1 → BN → ReLU → MaxPool
-    ├─ Layer 1  (256 ch, 56×56)
-    ├─ Layer 2  (512 ch, 28×28)
-    ├─ Layer 3  (1024 ch, 14×14)
-    │       │
-    │       ▼
-    │   ┌──────────────────────────────────────────┐
-    │   │  CBAM (Convolutional Block Attention)    │
-    │   │                                          │
-    │   │  Channel Attention:                      │
-    │   │    AvgPool + MaxPool → Shared MLP        │
-    │   │    → sigmoid → channel weights           │
-    │   │                                          │
-    │   │  Spatial Attention:                      │
-    │   │    AvgPool + MaxPool → 7×7 Conv          │
-    │   │    → sigmoid → spatial weights           │
-    │   └──────────────────────────────────────────┘
-    │       │
-    ├─ Layer 4  (2048 ch, 7×7)
-    ├─ AdaptiveAvgPool2d(1,1)
-    └─ FC(2048→512) → ReLU → Dropout(0.5) → FC(512→4)
-```
+<p align="center">
+  <img src="outputs/resnet50_cbam_architecture.svg" alt="ResNet50 + CBAM Model Architecture" width="750"/>
+</p>
+
+#### CBAM Attention Flow
+1. **Channel Attention Module (CAM)**: Aggregates spatial features of $F$ ($1024 \times 14 \times 14$) via parallel global average and max pooling to produce two $1024 \times 1 \times 1$ vectors. These are processed by a shared Multi-Layer Perceptron (MLP) with bottleneck ratio $r=16$, summed, and sigmoid-activated to generate channel weights $M_c$. The channel weights scale the original feature map to produce the channel-refined feature map $F'$.
+2. **Spatial Attention Module (SAM)**: Aggregates channel features of $F'$ along the channel axis using parallel average and max pooling to produce two $1 \times 14 \times 14$ spatial maps. These are concatenated to a $2 \times 14 \times 14$ tensor, convolved by a $7 \times 7$ filter (padding 3), and sigmoid-activated to generate spatial weights $M_s$. These weights scale $F'$ to produce the final, attention-guided feature map $F''$ which is passed to Layer 4.
 
 ### Two-Phase Training Strategy
 
@@ -161,6 +142,7 @@ alzheimers_pet_xai/
     ├── roc_curves.png
     ├── training_curves.png
     ├── stage_comparison_gradcam.png
+    ├── resnet50_cbam_architecture.svg
     └── workflow_diagram.svg
 ```
 
