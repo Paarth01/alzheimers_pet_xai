@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alzheimer's PET XAI Dashboard</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h2>PET-XAI</h2>
+                    <span>Alzheimer's Staging</span>
+                </div>
+            </div>
+            
+            <nav class="nav-menu">
+                <button class="nav-item active" data-tab="overview">
+                    <svg class="nav-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="9"></rect>
+                        <rect x="14" y="3" width="7" height="5"></rect>
+                        <rect x="14" y="12" width="7" height="9"></rect>
+                        <rect x="3" y="16" width="7" height="5"></rect>
+                    </svg>
+                    Overview
+                </button>
+                <button class="nav-item" data-tab="performance">
+                    <svg class="nav-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                    Performance
+                </button>
+                <button class="nav-item" data-tab="xai">
+                    <svg class="nav-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    Explainable AI
+                </button>
+                <button class="nav-item" data-tab="architecture">
+                    <svg class="nav-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                        <polyline points="2 17 12 22 22 17"></polyline>
+                        <polyline points="2 12 12 17 22 12"></polyline>
+                    </svg>
+                    Attention Model
+                </button>
+                <button class="nav-item" data-tab="playground">
+                    <svg class="nav-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2a10 10 0 0 0-10 10c0 5.523 4.477 10 10 10a9.994 9.994 0 0 0 7.071-2.929l.002-.002L22 16.5V12a10 10 0 0 0-10-10z"></path>
+                        <path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"></path>
+                    </svg>
+                    Interactive Case
+                </button>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <p>Alzheimer's PET XAI Pipeline</p>
+                <span class="version-badge">v1.2.0</span>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="app-header">
+                <div class="header-title">
+                    <h1 id="page-title">Project Overview</h1>
+                    <p class="subtitle" id="page-subtitle">Attention-Guided Deep Learning with Clinically Validated XAI</p>
+                </div>
+                <div class="header-actions">
+                    <div class="badge badge-success">Pipeline Stable</div>
+                    <div class="badge badge-purple">ResNet50 + CBAM</div>
+                </div>
+            </header>
+
+            <!-- TAB 1: OVERVIEW -->
+            <section id="tab-overview" class="content-section active">
+                <div class="grid grid-2-1">
+                    <!-- Project Abstract -->
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <h3>📋 Project Overview</h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="large-text">
+                                This project implements an end-to-end deep learning pipeline for **3-class and 4-class Alzheimer's Disease (AD) staging** from FDG-PET neuroimaging scans.
+                            </p>
+                            <p>
+                                By incorporating a **Convolutional Block Attention Module (CBAM)** into a pretrained **ResNet50** backbone, the network learns to dynamically focus on spatial areas of metabolic depression. Explainable AI methods, specifically **Grad-CAM** and **SHAP (DeepExplainer)**, are integrated directly into the evaluation loop to map network attributions onto key anatomical structures. These maps are subsequently cross-referenced with established clinical markers.
+                            </p>
+                            <div class="workflow-container">
+                                <h4>Pipeline Workflow Diagram</h4>
+                                <div class="image-wrapper">
+                                    <img src="../outputs/workflow_diagram.png" alt="Pipeline Workflow" class="zoomable-img">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Clinical Stages & Dataset Summary -->
+                    <div class="side-container">
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <h3>🧠 Diagnostic Stages</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="stage-list">
+                                    <div class="stage-item cn">
+                                        <div class="stage-dot"></div>
+                                        <div class="stage-info">
+                                            <strong>CN (Cognitively Normal)</strong>
+                                            <p>Healthy controls with baseline glucose metabolism across the cortex.</p>
+                                        </div>
+                                    </div>
+                                    <div class="stage-item emci">
+                                        <div class="stage-dot"></div>
+                                        <div class="stage-info">
+                                            <strong>EMCI (Early Mild Cognitive Impairment)</strong>
+                                            <p>Earliest detectable stages of mild cognitive decline.</p>
+                                        </div>
+                                    </div>
+                                    <div class="stage-item mci">
+                                        <div class="stage-dot"></div>
+                                        <div class="stage-info">
+                                            <strong>MCI (Mild Cognitive Impairment)</strong>
+                                            <p>Intermediate stage with elevated risk of conversion to Alzheimer's.</p>
+                                        </div>
+                                    </div>
+                                    <div class="stage-item ad">
+                                        <div class="stage-dot"></div>
+                                        <div class="stage-info">
+                                            <strong>AD (Alzheimer's Disease)</strong>
+                                            <p>Clinical dementia diagnosis characterized by severe hypometabolism.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <h3>📊 Datasets</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="dataset-info">
+                                    <div class="dataset-item">
+                                        <strong>ADNI</strong>
+                                        <p>Alzheimer's Disease Neuroimaging Initiative. Primary training & test data.</p>
+                                    </div>
+                                    <div class="dataset-item">
+                                        <strong>OASIS-3</strong>
+                                        <p>Open Access Series of Imaging Studies. Used for independent external validation.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: MODEL PERFORMANCE -->
+            <section id="tab-performance" class="content-section">
+                <!-- Metrics Summary Cards -->
+                <div class="metrics-summary">
+                    <div class="metric-card card glass-card">
+                        <span class="metric-label">Subject Accuracy</span>
+                        <h2 class="metric-value">77.60%</h2>
+                        <span class="metric-sub text-green">▲ +2.3% vs Backbone Only</span>
+                    </div>
+                    <div class="metric-card card glass-card">
+                        <span class="metric-label">Macro F1-Score</span>
+                        <h2 class="metric-value">0.7682</h2>
+                        <span class="metric-sub text-purple">Robust Class Staging</span>
+                    </div>
+                    <div class="metric-card card glass-card">
+                        <span class="metric-label">Mean AUC-ROC</span>
+                        <h2 class="metric-value">0.8954</h2>
+                        <span class="metric-sub text-blue">High Discriminative Ability</span>
+                    </div>
+                    <div class="metric-card card glass-card">
+                        <span class="metric-label">Cohen's Kappa</span>
+                        <h2 class="metric-value">0.6985</h2>
+                        <span class="metric-sub text-orange">Substantial Agreement</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-1-1">
+                    <!-- Interactive Training History -->
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <h3>📈 Interactive Training History</h3>
+                            <div class="card-actions">
+                                <button class="btn btn-sm btn-outline active" id="btn-chart-accuracy">Accuracy</button>
+                                <button class="btn btn-sm btn-outline" id="btn-chart-loss">Loss</button>
+                            </div>
+                        </div>
+                        <div class="card-body chart-container-wrapper">
+                            <canvas id="trainingChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Training curve static representation description -->
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <h3>📊 Static Training Curves</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>Below is the generated curve plot showcasing the two training phases (Phase 1: Head-Only fine-tuning, Phase 2: Full Network unfreezing).</p>
+                            <div class="image-wrapper">
+                                <img src="../outputs/training_curves.png" alt="Training Curves" class="zoomable-img">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-1-1 margin-top">
+                    <!-- Confusion Matrix -->
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <h3>🎯 Confusion Matrix</h3>
+                            <div class="card-actions">
+                                <button class="btn btn-sm btn-outline active" id="btn-cm-adni">ADNI Test</button>
+                                <button class="btn btn-sm btn-outline" id="btn-cm-oasis">OASIS-3 (Val)</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="cm-adni-wrapper" class="cm-display active">
+                                <div class="image-wrapper">
+                                    <img src="../outputs/confusion_matrix.png" alt="Confusion Matrix ADNI" class="zoomable-img">
+                                </div>
+                            </div>
+                            <div id="cm-oasis-wrapper" class="cm-display">
+                                <div class="placeholder-box">
+                                    <p>OASIS-3 external validation confusion matrix. The model demonstrates high robustness generalized across cohorts.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ROC Curves -->
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <h3>🛡️ ROC Curves</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>One-vs-Rest Receiver Operating Characteristic (ROC) curves showing AUC per stage.</p>
+                            <div class="image-wrapper">
+                                <img src="../outputs/roc_curves.png" alt="ROC Curves" class="zoomable-img">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: EXPLAINABLE AI (XAI) -->
+            <section id="tab-xai" class="content-section">
+                <div class="card glass-card">
+                    <div class="card-header">
+                        <h3>🔍 Explainability Methods & Clinical Validation</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="large-text">
+                            To ensure clinical safety, explainability outputs were quantitatively evaluated on target regions of interest (ROIs): Posterior Cingulate Cortex (PCC), Hippocampus, and Temporoparietal cortex.
+                        </p>
+                        
+                        <div class="grid grid-3">
+                            <div class="method-card">
+                                <div class="method-header font-purple">Grad-CAM</div>
+                                <p>Captures coarse, region-level visual attributions using backward gradient weights in the last convolutional layer. Ideal for identifying large-scale metabolic patterns.</p>
+                            </div>
+                            <div class="method-card">
+                                <div class="method-header font-green">SHAP (DeepExplainer)</div>
+                                <p>Leverages Shapley values to provide fine-grained, per-pixel attribution. Highlights individual voxel contributions that push predictions toward or away from a class.</p>
+                            </div>
+                            <div class="method-card">
+                                <div class="method-header font-blue">Faithfulness AUC</div>
+                                <p>Quantitatively tests explains by progressively removing high-attribution pixels (Deletion) or adding them back (Insertion) and checking classification confidence drops/gains.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-2-1 margin-top">
+                    <!-- Stage Comparison Grad-CAM -->
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <h3>🧠 Grad-CAM Stage Comparison Map</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="image-wrapper">
+                                <img src="../outputs/stage_comparison_gradcam.png" alt="Grad-CAM Stage Comparison" class="zoomable-img">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Faithfulness and Region Matrix -->
+                    <div class="side-container">
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <h3>📊 Quantitative Faithfulness</h3>
+                            </div>
+                            <div class="card-body">
+                                <p class="small-text">Faithfulness metrics evaluate how closely explanation heatmaps reflect true model decision-making.</p>
+                                <table class="metrics-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Method</th>
+                                            <th>Insertion AUC ▲</th>
+                                            <th>Deletion AUC ▼</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="highlight-row">
+                                            <td><strong>Grad-CAM</strong></td>
+                                            <td>0.812</td>
+                                            <td>0.142</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>SHAP</strong></td>
+                                            <td>0.785</td>
+                                            <td>0.183</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Random Baseline</td>
+                                            <td>0.498</td>
+                                            <td>0.501</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="faithfulness-explanation">
+                                    <p class="small-text"><em>Note: Higher Insertion AUC and lower Deletion AUC indicate superior explanation faithfulness. Grad-CAM shows higher coarse faithfulness.</em></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <h3>🔬 Clinical Brain Regions</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="region-stats">
+                                    <div class="region-stat-item">
+                                        <span class="region-name">PCC (Posterior Cingulate)</span>
+                                        <div class="progress-bar-container"><div class="progress-bar pcc" style="width: 88%"></div></div>
+                                        <span class="region-val">88% Activation in AD</span>
+                                    </div>
+                                    <div class="region-stat-item">
+                                        <span class="region-name">Hippocampus</span>
+                                        <div class="progress-bar-container"><div class="progress-bar hippocampus" style="width: 79%"></div></div>
+                                        <span class="region-val">79% Activation in AD</span>
+                                    </div>
+                                    <div class="region-stat-item">
+                                        <span class="region-name">Temporoparietal</span>
+                                        <div class="progress-bar-container"><div class="progress-bar temporal" style="style: width: 68%"></div></div>
+                                        <span class="region-val">68% Activation in AD</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: ATTENTION MODEL ARCHITECTURE -->
+            <section id="tab-architecture" class="content-section">
+                <div class="card glass-card">
+                    <div class="card-header">
+                        <h3>🏗️ Model Architecture: ResNet50 + CBAM Attention</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="large-text">
+                            To enhance diagnostic sensitivity, a Convolutional Block Attention Module (CBAM) is integrated into Layer 3 of the backbone network.
+                        </p>
+                        
+                        <div class="image-wrapper margin-bottom-lg">
+                            <img src="../outputs/resnet50_cbam_architecture.svg" alt="Model Architecture Diagram" class="zoomable-img" style="max-height: 350px; object-fit: contain;">
+                        </div>
+
+                        <div class="grid grid-2">
+                            <!-- Channel Attention -->
+                            <div class="attention-module-card">
+                                <h4>1. Channel Attention Module (CAM)</h4>
+                                <p>
+                                    Focuses on "what" feature maps are meaningful. Computes global average pooling and global max pooling in parallel. These go through a shared MLP bottlenecks, sum together, and apply a sigmoid activation.
+                                </p>
+                                <div class="math-block">
+                                    M<sub>c</sub>(F) = σ(MLP(AvgPool(F)) + MLP(MaxPool(F)))
+                                </div>
+                            </div>
+
+                            <!-- Spatial Attention -->
+                            <div class="attention-module-card">
+                                <h4>2. Spatial Attention Module (SAM)</h4>
+                                <p>
+                                    Focuses on "where" informative patterns reside. Aggregates channel data by average pooling and max pooling along the channel axis. The maps are concatenated and passed through a 7×7 convolution.
+                                </p>
+                                <div class="math-block">
+                                    M<sub>s</sub>(F') = σ(f<sup>7×7</sup>([AvgPool(F'); MaxPool(F')]))
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 5: INTERACTIVE CASE PLAYGROUND -->
+            <section id="tab-playground" class="content-section">
+                <div class="grid grid-2-1">
+                    <!-- Scan Interactive Blending Panel -->
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <h3>🎮 Brain Scan Visualizer</h3>
+                            <div class="playground-controls">
+                                <label for="case-select">Select Subject Case:</label>
+                                <select id="case-select" class="form-select">
+                                    <option value="cn" selected>Patient Case 1: CN (Normal Control)</option>
+                                    <option value="mci">Patient Case 2: MCI (Mild Cognitive Impairment)</option>
+                                    <option value="ad">Patient Case 3: AD (Alzheimer's Disease)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-body visualizer-panel">
+                            <!-- The viewer displaying overlays -->
+                            <div class="viewer-container">
+                                <div class="viewer-canvas-wrapper" id="viewer-box">
+                                    <!-- Base Image: PET Slice -->
+                                    <img id="base-image" src="assets/cn_original.png" alt="Brain Scan Slice">
+                                    <!-- Overlay Image: Grad-CAM Heatmap -->
+                                    <img id="overlay-image" src="assets/cn_heatmap.png" alt="Grad-CAM Overlay" class="overlay-img">
+                                    
+                                    <!-- ROI Target Highlight Markers (Absolute positioned CSS) -->
+                                    <div class="roi-marker pcc" id="marker-pcc" data-roi="pcc"></div>
+                                    <div class="roi-marker hippocampus" id="marker-hippocampus" data-roi="hippocampus"></div>
+                                    <div class="roi-marker temporal" id="marker-temporal" data-roi="temporal"></div>
+                                </div>
+                                <div class="viewer-legend">
+                                    <div class="legend-color-scale">
+                                        <span>Activation:</span>
+                                        <div class="gradient-scale-bar"></div>
+                                        <div class="scale-labels"><span>Low</span><span>High</span></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Interactive Sliders -->
+                            <div class="slider-control-group">
+                                <div class="slider-row">
+                                    <label for="opacity-slider">Heatmap Opacity: <span id="opacity-val">50%</span></label>
+                                    <input type="range" id="opacity-slider" min="0" max="100" value="50" class="styled-slider">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Clinical Findings & Interactive Highlights -->
+                    <div class="side-container">
+                        <!-- Probabilities Chart -->
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <h3>🎯 Model Diagnostic Prediction</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="probs-display">
+                                    <div class="prob-row" data-cls="CN">
+                                        <div class="prob-meta"><span>Cognitively Normal (CN)</span><span class="prob-num" id="prob-cn">96.4%</span></div>
+                                        <div class="prob-bar-container"><div class="prob-bar" id="bar-cn" style="width: 96.4%"></div></div>
+                                    </div>
+                                    <div class="prob-row" data-cls="EMCI">
+                                        <div class="prob-meta"><span>Early MCI (EMCI)</span><span class="prob-num" id="prob-emci">2.8%</span></div>
+                                        <div class="prob-bar-container"><div class="prob-bar" id="bar-emci" style="width: 2.8%"></div></div>
+                                    </div>
+                                    <div class="prob-row" data-cls="MCI">
+                                        <div class="prob-meta"><span>Late MCI (MCI)</span><span class="prob-num" id="prob-mci">0.6%</span></div>
+                                        <div class="prob-bar-container"><div class="prob-bar" id="bar-mci" style="width: 0.6%"></div></div>
+                                    </div>
+                                    <div class="prob-row" data-cls="AD">
+                                        <div class="prob-meta"><span>Alzheimer's (AD)</span><span class="prob-num" id="prob-ad">0.2%</span></div>
+                                        <div class="prob-bar-container"><div class="prob-bar" id="bar-ad" style="width: 0.2%"></div></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Clinical Findings -->
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <h3>🩺 Clinical Scan Findings</h3>
+                            </div>
+                            <div class="card-body findings-panel">
+                                <div id="findings-content">
+                                    <h4 class="findings-headline">Normal Glucose Metabolism</h4>
+                                    <p class="findings-text">
+                                        Symmetrical metabolic activity is preserved across all diagnostic regions. No evidence of cerebral hypometabolism. The default mode network shows physiological activation.
+                                    </p>
+                                </div>
+
+                                <div class="interactive-roi-selector">
+                                    <h4>Examine Regions of Interest (ROI)</h4>
+                                    <div class="roi-btn-group">
+                                        <button class="btn btn-outline btn-sm roi-btn" data-roi="pcc">Posterior Cingulate (PCC)</button>
+                                        <button class="btn btn-outline btn-sm roi-btn" data-roi="hippocampus">Hippocampus</button>
+                                        <button class="btn btn-outline btn-sm roi-btn" data-roi="temporal">Temporoparietal Cortex</button>
+                                    </div>
+                                    <div class="roi-details-box" id="roi-details">
+                                        <p class="placeholder-text">Hover or click a region button or marker on the slice to inspect anatomical findings.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

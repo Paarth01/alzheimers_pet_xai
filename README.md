@@ -187,9 +187,20 @@ python main.py --mode evaluate --checkpoint checkpoints/best_model.pth
 # Generate XAI outputs (Grad-CAM, SHAP, Faithfulness)
 python main.py --mode xai --checkpoint checkpoints/best_model.pth
 
-# Run full pipeline (train → evaluate → xai)
+# Run full pipeline (train -> evaluate -> xai)
 python main.py --mode all
+
+# Launch the interactive web-based results dashboard
+python run_dashboard.py
 ```
+
+### 🖥️ Interactive Web Dashboard
+You can explore all classification and XAI results through a premium, interactive dark-mode dashboard. Run `python run_dashboard.py` to:
+- Automatically pre-process and crop brain slices from the grid comparisons.
+- Launch a zero-dependency local HTTP server serving the workspace.
+- View and switch between training accuracy/loss curves, ROC curves, and confusion matrices.
+- Blending PET scans with Grad-CAM heatmap overlays via a custom opacity slider.
+- Click anatomical region hotspots (PCC, Hippocampus, Temporoparietal) to inspect specific clinical findings.
 
 ---
 
